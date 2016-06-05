@@ -1,37 +1,49 @@
 package main;
 
 import (
+	"fmt";
 	"runner";
 	"compiler";
-	"path";
+//	"path";
 	"testcase";
 )
 
 // A test run
 func main() {
-	c := &compiler.GPP{
-		Codepath : path.Join("..","hr","pangram"),
-	        Codefile : "pangram.cpp",
-		Execpath : path.Join("..","hr","pangram"),
-		Execfile : "pg",
+	t := &testcase.TestGroup {
+		Name: "Pangram",
+		Id: "test-id",
+		Lang: "C++",
+
+		Codepath: "../hr/pangram",
+		Codefile: "pangram.cpp",
+		Execpath: "../hr/pangram",
+		Inputpath: "../hr/pangram",
+		Inputfiles: []string{"test.txt"},
+
+		Testpath: "",
+		Testfiles: []string{"none"},
+
+		Outputpath: ".",
+		Maxtime: 3,
 	}
+	c := &compiler.GPP{T: t,}
 	err := c.Compile();
 	if err != nil {
+		fmt.Println(err);
 		panic(err);
 	}
 
-	r := &runner.ExecRunner{
-		Test: &testcase.TestCase{
-			Name: "pangram",
-			Execpath : c.Execpath,
-			Execfile : c.Execfile,
-			Inputpath : c.Codepath,
-			Inputfile : "test.txt",
-			Outputpath : ".",
-			Outputfile : "pangram.txt",
-			Maxtime : 2,
-		},
-	};
+	_, tests := t.GenerateTestCases();
+	for _, test := range tests{
+		r := &runner.ExecRunner{
+			Test: &test,
+		};
 
-	r.Run();
+		err := r.Run();
+
+		if err != nil {
+			panic(err);
+		}
+	}
 }

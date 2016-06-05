@@ -20,6 +20,7 @@ Testpath : string : Path where the corect outputs are stored
 Testfile : string : File where the correct output for this test case is stored
 
 Maxtime : int64 : Maximum run time in Milliseconds
+
 */
 
 import (

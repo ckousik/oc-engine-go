@@ -1,4 +1,4 @@
-package testcase;
+package test;
 
 import (
 	"errors";
@@ -29,10 +29,10 @@ type TestGroup struct {
 
 }
 
-func (t *TestGroup) GenerateTestCases () (error, []TestCase) {
+func (t *TestGroup) GenerateTestCases () ([]TestCase, error) {
 
 	if len(t.Inputfiles) != len(t.Testfiles) {
-		return errors.New("Number of input files and test files should be equal"), nil;
+		return nil, errors.New("Number of input files and test files should be equal");
 	}
 
 	t.Outputfiles = make([]string, len(t.Inputfiles));
@@ -47,7 +47,7 @@ func (t *TestGroup) GenerateTestCases () (error, []TestCase) {
 		}else if strings.HasSuffix(inp, ".in"){
 			suffix = ".in";
 		}else {
-			return errors.New("Input file has invalid extension"), nil;
+			return nil, errors.New("Input file has invalid extension");
 		}
 		
 		t.Outputfiles[i] = strings.TrimSuffix(inp, suffix) + ".out";
@@ -70,5 +70,5 @@ func (t *TestGroup) GenerateTestCases () (error, []TestCase) {
 		});
 	}
 
-	return nil, tc;
+	return tc, nil;
 }

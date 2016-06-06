@@ -5,12 +5,13 @@ import (
 	"runner";
 	"compiler";
 //	"path";
-	"testcase";
+	"test";
+	"sync";
 )
 
 // A test run
 func main() {
-	t := &testcase.TestGroup {
+	testGroup := &test.TestGroup {
 		Name: "Pangram",
 		Id: "test-id",
 		Lang: "C++",
@@ -27,23 +28,27 @@ func main() {
 		Outputpath: ".",
 		Maxtime: 3,
 	}
-	c := &compiler.GPP{T: t,}
+	
+	c := &compiler.GPP{ testGroup };
 	err := c.Compile();
 	if err != nil {
 		fmt.Println(err);
 		panic(err);
 	}
 
-	_, tests := t.GenerateTestCases();
-	for _, test := range tests{
-		r := &runner.ExecRunner{
-			Test: &test,
-		};
-
-		err := r.Run();
-
-		if err != nil {
-			panic(err);
-		}
+	tests, _ := testGroup.GenerateTestCases();
+	var wg sync.WaitGroup;
+	
+	for _, t := range tests{
+		wg.Add(1);
+		go func(testCase *test.TestCase){
+			defer wg.Done();
+			r := &runner.ExecRunner{
+				testCase,
+			};
+			r.Run();
+		}(&t)
 	}
+
+	wg.Wait();
 }

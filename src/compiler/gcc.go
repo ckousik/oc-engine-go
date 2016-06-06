@@ -3,14 +3,21 @@ package compiler;
 import (	
 	"os/exec";
 	"path";
+	"test";
+	"errors";
+	"strings";
 )
 
 type GCC struct {
-	Codepath, Codefile, Execpath, Execfile string
+	*test.TestGroup;
 };
 
 func (c *GCC) Compile () error {
 	in := path.Join(c.Codepath, c.Codefile);
+	err := c.setExecfile();
+	if err != nil {
+		return err;
+	}
 	out := path.Join(c.Execpath, c.Execfile);
 
 	cmd := exec.Command("gcc",in,"-o",out);
@@ -24,3 +31,15 @@ func (c *GCC) Compile () error {
 	return <- done;
 }
 
+func (c *GCC) setExecfile () error {
+	if strings.HasSuffix(c.Codefile, ".c") {
+
+		c.Execfile = strings.TrimSuffix(c.Codefile, ".c");
+
+	}else{
+
+		return errors.New("Invalid file extension");
+	}
+
+	return nil;
+}

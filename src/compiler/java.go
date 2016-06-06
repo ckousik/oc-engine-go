@@ -5,10 +5,11 @@ import (
 	"path";
 	"strings";
 	"errors";
+	"test";
 )
 
 type Java struct {
-	Codepath, Codefile, Execpath, Execfile string;
+	*test.TestGroup
 }
 
 func (c *Java) Compile () error {

@@ -4,37 +4,37 @@ import (
 	"os/exec";
 	"path";
 	"time";
-	"testcase";
+	"test";
 )
 
 type JavaRunner struct {
-	Test *testcase.TestCase
+	*test.TestCase
 }
 
 func (r *JavaRunner) Run() error {
-	inreader, outwriter, err := r.Test.GetIOStreams();
+	inreader, outwriter, err := r.GetIOStreams();
 	defer CloseFiles(inreader, outwriter);
 	
 	if err != nil {
 		return err;
 	}
 	
-	exec_ := path.Join(r.Test.Execpath, r.Test.Execfile);
+	exec_ := path.Join(r.Execpath, r.Execfile);
         cmd := exec.Command("java",exec_);
-        ms := time.Duration(r.Test.Maxtime);
-
+        
         cmd.Stdin = inreader;
         cmd.Stdout = outwriter;
 	done := make(chan error, 1);
 
 	//Start execution and wait
+	timeout := time.After(time.Duration(r.Maxtime) * time.Millisecond);
 	cmd.Start();
 	go func() {
 		done <- cmd.Wait();
 	}();
 
 	select{
-	case <- time.After(ms * time.Millisecond):
+	case <- timeout:
 		return r.HandleTLE(cmd);
 
 	case err := <- done:

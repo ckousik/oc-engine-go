@@ -2,21 +2,18 @@ package compiler;
 
 import (
 	"fmt";
-	"os";
 	"os/exec";
 	"path";
-	"testcase";
+	"test";
 	"strings";
 	"errors";
 )
 
 type GPP struct {
-	T *testcase.TestGroup
+	*test.TestGroup
 }
 
 func (c *GPP) Compile () error {
-	t := c.T;
-	
 	err := c.setExecfile();
 
 	if err != nil {
@@ -24,15 +21,14 @@ func (c *GPP) Compile () error {
 		return err;
 	}
 	
-	in := path.Join(t.Codepath, t.Codefile);
+	in := path.Join(c.Codepath, c.Codefile);
+	out := path.Join(c.Execpath, c.Execfile);
 	
-	out := path.Join(t.Execpath, t.Execfile);
-	
-	fmt.Println("Compiling: input:", in);
 	cmd := exec.Command ("g++",in,"-o",out);
+
 	done := make(chan error,1);
+
 	cmd.Start();
-	cmd.Stderr = os.Stdout;
 	go func() {
 		done <- cmd.Wait();
 	}();
@@ -40,12 +36,11 @@ func (c *GPP) Compile () error {
 }
 
 func (c *GPP) setExecfile () error {
-	t := c.T;
-
-	if !strings.HasSuffix(t.Codefile,".cpp") {
+	
+	if !strings.HasSuffix(c.Codefile,".cpp") {
 		return errors.New("Invalid file extension for C++ compiler");
 	}
 	
-	t.Execfile = strings.TrimSuffix(t.Codefile,".cpp");
+	c.Execfile = strings.TrimSuffix(c.Codefile,".cpp");
 	return nil;
 }

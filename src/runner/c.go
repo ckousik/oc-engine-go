@@ -1,6 +1,7 @@
 package runner;
 
 import (
+	"os";
 	"os/exec";
 	"test";
 	"path";
@@ -13,8 +14,12 @@ func (c C) Start (t *test.TestGroup) chan StatusCode {
 	status := make(chan StatusCode);
 	go func () {
 		// Compile
-		compile_input := path.Join(t.Codepath,t.Codefile);
-		compile_output := path.Join(t.Execpath,t.Execfile);
+		compile_input := t.Codefile;
+		compile_output := path.Join(os.Getenv("OC_EXEC"), t.RunId);
+
+		defer os.Remove(compile_input);
+		defer os.Remove(compile_output);
+
 		compile_command := exec.Command("gcc",compile_input,"-o",compile_output);
 		err := compile_command.Run();
 
@@ -57,10 +62,7 @@ func (c C) Start (t *test.TestGroup) chan StatusCode {
 				}
 
 				//Compare files here
-				out := path.Join(tc.Outputpath, tc.Outputfile);
-				testComp := path.Join(tc.Testpath, tc.Testfile);
-
-				res, err := CompareFiles(out, testComp);
+				res, err := CompareFiles(tc.Outputfile, tc.Testfile);
 				if err != nil {
 					status <- TestRunError;
 					continue;

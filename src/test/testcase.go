@@ -25,22 +25,17 @@ Maxtime : int64 : Maximum run time in Milliseconds
 
 import (
 	"os";
-	"path";
 	"fmt";
 )
 
 
 type TestCase struct {
 
-	Name string
-	
-	Inputpath, Inputfile string
+	Inputfile string
 
-	Execpath, Execfile string
+	Outputfile string
 
-	Outputpath, Outputfile string
-
-	Testpath, Testfile string
+	Testfile string
 
 	Maxtime int64
 }
@@ -48,21 +43,18 @@ type TestCase struct {
 func (t *TestCase) GetIOStreams () (*os.File, *os.File, error) {
 
 	var outwriter *os.File;
-	
-	in := path.Join(t.Inputpath, t.Inputfile);
-	out := path.Join(t.Outputpath, t.Outputfile);
-	inreader, err :=  os.Open(in);
+	inreader, err :=  os.Open(t.Inputfile);
 
 	if err != nil {
 		return nil, nil, err;
 	}
 
-	if _ , err := os.Stat(out); os.IsNotExist(err) {
-		fmt.Println("Creating file for writing: ", out);
-		outwriter, err = os.Create(out);
+	if _ , err := os.Stat(t.Outputfile); os.IsNotExist(err) {
+		fmt.Println("Creating file for writing: ", t.Outputfile);
+		outwriter, err = os.Create(t.Outputfile);
 	}else {
-		fmt.Println("Opening file for writing:", out);
-		outwriter, err = os.Open(out);
+		fmt.Println("Opening file for writing:", t.Outputfile);
+		outwriter, err = os.Open(t.Outputfile);
 	}
 	
 	if err != nil {

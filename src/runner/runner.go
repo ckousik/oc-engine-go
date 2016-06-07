@@ -1,6 +1,7 @@
 package runner;
 
 import (
+	"fmt";
 	"test";
 	"os";
 	"io/ioutil";
@@ -18,7 +19,8 @@ const (
 	TestFail = 5
 	TestTLE = 6
 	TestRunError = 7
-	ExecutionCompleted = 8
+	ExecutionStarted = 8
+	ExecutionCompleted = 9
 )
 
 
@@ -43,4 +45,9 @@ func CompareFiles (file1, file2 string) (bool, error) {
 	fc2, _ := ioutil.ReadAll(f2);
 
 	return bytes.Equal(hash.Sum(fc1), hash.Sum(fc2)), nil;
+}
+
+func Cleanup (path string) {
+	err := os.RemoveAll(path);
+	fmt.Println(err);
 }

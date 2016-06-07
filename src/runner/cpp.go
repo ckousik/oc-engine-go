@@ -1,6 +1,7 @@
 package runner;
 
 import (
+	"os";
 	"os/exec";
 	"test";
 	"path";
@@ -11,10 +12,14 @@ type CPP struct {};
 
 func (c CPP) Start (t *test.TestGroup) chan StatusCode {
 	status := make(chan StatusCode);
+
+	//Make directory to store outputs
+	os.Mkdir(path.Join(os.Getenv("OC_OUTPUTS"),t.RunId),0777);
+		
 	go func () {
 		// Compile
-		compile_input := path.Join(t.Codepath,t.Codefile);
-		compile_output := path.Join(t.Execpath,t.Execfile);
+		compile_input := t.Codefile;
+		compile_output := path.Join(os.Getenv("OC_EXEC"),t.RunId);
 		compile_command := exec.Command("g++",compile_input,"-o",compile_output);
 		err := compile_command.Run();
 
@@ -23,7 +28,7 @@ func (c CPP) Start (t *test.TestGroup) chan StatusCode {
 			status <- CompileError;
 			return;
 		}
-
+		
 		testCases, err := t.GenerateTestCases();
 		for _, tc := range testCases {
 
@@ -42,7 +47,7 @@ func (c CPP) Start (t *test.TestGroup) chan StatusCode {
 			done := make(chan error, 1);
 			timeout := time.After(time.Duration(tc.Maxtime) * time.Millisecond);
 			exec_command.Start();
-
+			status <- ExecutionStarted;
 			go func(){
 				defer inreader.Close();
 				defer outwriter.Close();
@@ -56,14 +61,31 @@ func (c CPP) Start (t *test.TestGroup) chan StatusCode {
 				}
 
 				//Compare files here
+				res, err := CompareFiles(tc.Outputfile, tc.Testfile);
+				if err != nil {
+					status <- TestRunError;
+					continue;
+				}
+				if res {
+					status <- TestSuccess;
+				}else {
+					status <- TestFail;
+				}
 				
 				
 			case <- timeout:
 				status <- TestTLE;
 			}
+			
+			//Close streams
+			inreader.Close();
+			outwriter.Close();
 		}
 		status <- ExecutionCompleted;
 
+		//Cleanup
+		Cleanup(path.Join(os.Getenv("OC_OUTPUTS"),t.RunId));
+		Cleanup(path.Join(os.Getenv("OC_EXEC"),t.RunId));
 	}();
 	return status;
 }

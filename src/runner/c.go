@@ -13,11 +13,11 @@ type C struct {};
 func (c C) Start (t *test.TestGroup) chan StatusCode {
 	status := make(chan StatusCode);
 	go func () {
+		os.Mkdir(path.Join(os.Getenv("OC_OUTPUTS"),t.RunId), 0777);
 		// Compile
 		compile_input := t.Codefile;
 		compile_output := path.Join(os.Getenv("OC_EXEC"), t.RunId);
 
-		defer os.Remove(compile_input);
 		defer os.Remove(compile_output);
 
 		compile_command := exec.Command("gcc",compile_input,"-o",compile_output);

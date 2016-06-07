@@ -23,6 +23,7 @@ func (c CPP) Start (t *test.TestGroup) chan StatusCode {
 		compile_command := exec.Command("g++",compile_input,"-o",compile_output);
 		err := compile_command.Run();
 
+		defer os.Remove(compile_output);
 		//Terminate on compilation error
 		if err != nil {
 			status <- CompileError;
@@ -83,9 +84,6 @@ func (c CPP) Start (t *test.TestGroup) chan StatusCode {
 		}
 		status <- ExecutionCompleted;
 
-		//Cleanup
-		Cleanup(path.Join(os.Getenv("OC_OUTPUTS"),t.RunId));
-		Cleanup(path.Join(os.Getenv("OC_EXEC"),t.RunId));
 	}();
 	return status;
 }

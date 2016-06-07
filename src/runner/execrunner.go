@@ -13,7 +13,7 @@ type ExecRunner struct {
 	*test.TestCase
 }
 
-func (r *ExecRunner) Run () error {
+func (r ExecRunner) Run () error {
 	inreader, outwriter, err := r.GetIOStreams();
 
 	defer CloseFiles(inreader, outwriter);
@@ -45,11 +45,15 @@ func (r *ExecRunner) Run () error {
 	}
 }
 
-func (r *ExecRunner) HandleTLE (cmd *exec.Cmd) error{
+func (r ExecRunner) HandleTLE (cmd *exec.Cmd) error{
 	fmt.Println("Time limit exceeded");
 	if err := cmd.Process.Kill(); err != nil {
 		return errors.New("Unable to kill process");
 	}
 
 	return errors.New("Time Limit Exceeded");
+}
+
+func (r ExecRunner) SetTestCase (t *test.TestCase) {
+	r = ExecRunner{t};
 }

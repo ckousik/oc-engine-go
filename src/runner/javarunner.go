@@ -11,7 +11,7 @@ type JavaRunner struct {
 	*test.TestCase
 }
 
-func (r *JavaRunner) Run() error {
+func (r JavaRunner) Run() error {
 	inreader, outwriter, err := r.GetIOStreams();
 	defer CloseFiles(inreader, outwriter);
 	
@@ -42,6 +42,10 @@ func (r *JavaRunner) Run() error {
 	}
 }
 
-func (r *JavaRunner) HandleTLE(cmd *exec.Cmd) error{
+func (r JavaRunner) HandleTLE (cmd *exec.Cmd) error{
 	return cmd.Process.Kill();
+}
+
+func (r JavaRunner) SetTestCase (t *test.TestCase) {
+	r = JavaRunner{t};
 }

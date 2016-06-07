@@ -13,7 +13,7 @@ type GPP struct {
 	*test.TestGroup
 }
 
-func (c *GPP) Compile () error {
+func (c GPP) Compile () error {
 	err := c.setExecfile();
 
 	if err != nil {
@@ -35,7 +35,7 @@ func (c *GPP) Compile () error {
 	return <- done;
 }
 
-func (c *GPP) setExecfile () error {
+func (c GPP) setExecfile () error {
 	
 	if !strings.HasSuffix(c.Codefile,".cpp") {
 		return errors.New("Invalid file extension for C++ compiler");
@@ -44,3 +44,9 @@ func (c *GPP) setExecfile () error {
 	c.Execfile = strings.TrimSuffix(c.Codefile,".cpp");
 	return nil;
 }
+
+func (c GPP) SetTestGroup (tg *test.TestGroup) {
+	c = GPP{tg};
+}
+
+

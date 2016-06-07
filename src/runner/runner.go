@@ -4,10 +4,12 @@ import (
 	"fmt";
 	"os";
 	"os/exec";
+	"test";
 )
 type Runner interface{
-	Run();
-	HandleTLE(*exec.Cmd);
+	Run() error;
+	HandleTLE(*exec.Cmd) error;
+	SetTestCase (*test.TestCase);
 }
 
 

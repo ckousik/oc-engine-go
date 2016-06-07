@@ -12,7 +12,7 @@ type GCC struct {
 	*test.TestGroup;
 };
 
-func (c *GCC) Compile () error {
+func (c GCC) Compile () error {
 	in := path.Join(c.Codepath, c.Codefile);
 	err := c.setExecfile();
 	if err != nil {
@@ -31,7 +31,7 @@ func (c *GCC) Compile () error {
 	return <- done;
 }
 
-func (c *GCC) setExecfile () error {
+func (c GCC) setExecfile () error {
 	if strings.HasSuffix(c.Codefile, ".c") {
 
 		c.Execfile = strings.TrimSuffix(c.Codefile, ".c");
@@ -43,3 +43,8 @@ func (c *GCC) setExecfile () error {
 
 	return nil;
 }
+
+func (c GCC) SetTestGroup (tg *test.TestGroup) {
+	c = GCC{tg};
+}
+

@@ -1,4 +1,4 @@
-package pipeline;
+package worker;
 
 import (
 	"os";
@@ -37,10 +37,6 @@ func (p *Payload) VerifyPayload () error {
 }
 
 func (p *Payload) GenerateTestGroup () (*test.TestGroup, error) {
-
-	if err := p.VerifyPayload(); err != nil {
-		return nil, err;
-	}
 	
 /*
 * Get input and test files from directory

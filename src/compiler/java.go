@@ -12,7 +12,7 @@ type Java struct {
 	*test.TestGroup
 }
 
-func (c *Java) Compile () error {
+func (c Java) Compile () error {
 
 	if !strings.HasSuffix(c.Codefile,".java") {
 		return errors.New("File should be .java"); 
@@ -32,4 +32,8 @@ func (c *Java) Compile () error {
 
 	return <- done;
 	
+}
+
+func (c Java) SetTestGroup (tg *test.TestGroup) {
+	c = Java{tg};
 }

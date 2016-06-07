@@ -1,5 +1,17 @@
-### OpenCoder Engine Go
+## OpenCoder Engine Go
 
-OpenCoder Engine is the backend for an online compiler. The engine accepts code as input, compiles it and executes it. This is done in the pipeline, which chooses the appropriate compiler - runner pair and gives the location of the output. This can be run inside a docker container for isolation.
+OpenCoder Engine is the backend for an online compiler. The engine accepts code as input, compiles it, executes it and compares the output against test output. Useful for online coding websites.
+
+#### ENV VARIABLES
+------------------------------------------------------------------
+|OC_TEST   | test outputs are stored here. Tests indexed by name.|
+------------------------------------------------------------------
+|OC_INPUTS | test inputs are stored here. Tests indexed by name. |
+------------------------------------------------------------------
+|OC_EXEC   | executables are stored here. Indexed by id          |
+------------------------------------------------------------------
+|OC_OUTPUTS| outputs from runs are stored here. Indexed by id	 |
+------------------------------------------------------------------
+
 
 Chinmay Kousik

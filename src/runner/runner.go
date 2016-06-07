@@ -1,30 +1,46 @@
 package runner;
 
 import (
-	"fmt";
-	"os";
-	"os/exec";
 	"test";
+	"os";
+	"io/ioutil";
+	"crypto/sha1";
+	"bytes";
 )
-type Runner interface{
-	Run() error;
-	HandleTLE(*exec.Cmd) error;
-	SetTestCase (*test.TestCase);
+
+type StatusCode int
+
+const (
+	CompileError = 1
+	RuntimeError = 2
+	FileError = 3
+	TestSuccess = 4
+	TestFail = 5
+	TestTLE = 6
+	TestRunError = 7
+	ExecutionCompleted = 8
+)
+
+
+type Runner interface {
+	Start (* test.TestGroup) chan StatusCode
 }
 
-
-func CloseFiles (inreader *os.File,outwriter *os.File) {
-	var err error;
-
-	err = inreader.Close();
+func CompareFiles (file1, file2 string) (bool, error) {
+	f1, err := os.Open(file1);
 	if err != nil {
-		fmt.Println("Error closing input file");
+		return false, err;
 	}
 
-	err = outwriter.Close();
+	f2, err := os.Open(file2);
 	if err != nil {
-		fmt.Println("Error closing output file");
+		return false, err;
 	}
 
+	hash := sha1.New();
+
+	fc1, _ := ioutil.ReadAll(f1);
+	fc2, _ := ioutil.ReadAll(f2);
+
+	return bytes.Equal(hash.Sum(fc1), hash.Sum(fc2)), nil;
 }
-

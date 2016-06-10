@@ -29,7 +29,8 @@ func (c CPP) Start (t *test.TestGroup) chan StatusCode {
 			status <- CompileError;
 			return;
 		}
-		
+
+		status <- ExecutionStarted;
 		testCases, err := t.GenerateTestCases();
 		for _, tc := range testCases {
 
@@ -48,7 +49,6 @@ func (c CPP) Start (t *test.TestGroup) chan StatusCode {
 			done := make(chan error, 1);
 			timeout := time.After(time.Duration(tc.Maxtime) * time.Millisecond);
 			exec_command.Start();
-			status <- ExecutionStarted;
 			go func(){
 				defer inreader.Close();
 				defer outwriter.Close();

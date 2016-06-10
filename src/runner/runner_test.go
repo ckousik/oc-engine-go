@@ -16,7 +16,6 @@ func TestCPP (t *testing.T) {
 		Codefile: codefile,
 		RunId: runid,
 		TestId: "count",
-		Lang: "cpp",
 		Maxtime: 10,
 	};
 
@@ -38,7 +37,6 @@ func TestPy (t *testing.T) {
 		Codefile: codefile,
 		RunId: runid,
 		TestId: "count",
-		Lang: "c",
 		Maxtime: 100,
 	};
 
@@ -60,7 +58,6 @@ func TestC (t *testing.T) {
 		Codefile: codefile,
 		RunId: runid,
 		TestId: "count",
-		Lang: "c",
 		Maxtime: 10,
 	};
 

@@ -20,6 +20,8 @@ func TestWorker (t *testing.T) {
 	}
 
 	result := <- resultchan;
-	t.Log(result.RunId + "\n");
-	t.Log(result.Err);
+	t.Logf("Result Codes: ");
+	for _, c := range result.Results {
+		t.Logf("%d ",int(c));
+	}
 }

@@ -45,13 +45,9 @@ func Deploy (inputchan chan InputPayload) chan ResultPayload{
 					};
 					errored = true;
 					break;	
-				}
-
-				if status == runner.ExecutionStarted{
+				}else if status == runner.ExecutionStarted{
 					addresults = true;
-				}
-
-				if addresults {
+				}else if addresults {
 					rescodes = append(rescodes, status);
 				}
 			}

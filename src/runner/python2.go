@@ -24,6 +24,7 @@ func (p Py2) Start (t *test.TestGroup) chan StatusCode {
 			return;
 		}
 
+		status <- ExecutionStarted;  
 		for _, tc := range testcases {
 
 			inreader, outwriter, err := tc.GetIOStreams();

@@ -30,6 +30,7 @@ func (c C) Start (t *test.TestGroup) chan StatusCode {
 		}
 
 		testCases, err := t.GenerateTestCases();
+		status <- ExecutionStarted;
 		for _, tc := range testCases {
 
 			inreader, outwriter, err := tc.GetIOStreams();

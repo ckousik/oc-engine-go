@@ -14,7 +14,7 @@ import (
 
 type TestGroup struct {
 	
-	TestId, RunId, Lang string
+	TestId, RunId string
 
 	Codefile string
 

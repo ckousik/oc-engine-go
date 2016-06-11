@@ -3,14 +3,14 @@ package runner;
 import (
 	"os";
 	"os/exec";
-	"test";
+	"task";
 	"path";
 	"time";
 )
 
 type CPP struct {};
 
-func (c CPP) Start (t *test.TestGroup) chan StatusCode {
+func (c CPP) Start (t *task.TestGroup) chan StatusCode {
 	status := make(chan StatusCode);
 
 	//Make directory to store outputs

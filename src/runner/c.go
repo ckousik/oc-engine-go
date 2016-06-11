@@ -3,14 +3,14 @@ package runner;
 import (
 	"os";
 	"os/exec";
-	"test";
+	"task";
 	"path";
 	"time";
 )
 
 type C struct {};
 
-func (c C) Start (t *test.TestGroup) chan StatusCode {
+func (c C) Start (t *task.TestGroup) chan StatusCode {
 	status := make(chan StatusCode);
 	go func () {
 		os.Mkdir(path.Join(os.Getenv("OC_OUTPUTS"),t.RunId), 0777);

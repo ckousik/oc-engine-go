@@ -1,4 +1,4 @@
-package test;
+package task;
 
 /*
 This represents a test case to be executed by a Runner

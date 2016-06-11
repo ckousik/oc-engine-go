@@ -1,4 +1,4 @@
-package test;
+package task;
 
 import (
 	"errors";

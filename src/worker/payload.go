@@ -80,5 +80,4 @@ type ResultPayload struct {
 	Results []runner.StatusCode
 
 	Err error
-	
 }

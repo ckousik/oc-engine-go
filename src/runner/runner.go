@@ -2,7 +2,7 @@ package runner;
 
 import (
 	"fmt";
-	"test";
+	"task";
 	"os";
 	"io/ioutil";
 	"crypto/sha1";
@@ -25,7 +25,7 @@ const (
 
 
 type Runner interface {
-	Start (* test.TestGroup) chan StatusCode
+	Start (* task.TestGroup) chan StatusCode
 }
 
 func CompareFiles (file1, file2 string) (bool, error) {

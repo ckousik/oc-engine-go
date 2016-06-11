@@ -5,12 +5,12 @@ import (
 	"os/exec";
 	"path";
 	"time";
-	"test";
+	"task";
 )
 
 type Py2 struct {}
 
-func (p Py2) Start (t *test.TestGroup) chan StatusCode {
+func (p Py2) Start (t *task.TestGroup) chan StatusCode {
 	status := make(chan StatusCode, 1);
 	go func(){
 		

@@ -1,0 +1,67 @@
+package runner;
+
+import (
+	"os";
+	"os/exec";
+	"path";
+	"task";
+	"time";
+)
+
+type Ruby struct{};
+
+func (r Ruby) Start(t *task.TestGroup) chan StatusCode {
+	status := make(chan StatusCode);
+	// run interpreter 
+	go func(){
+		os.MkdirAll(path.Join(os.Getenv("OC_OUTPUTS"), t.RunId), 0777);
+		defer os.RemoveAll(path.Join(os.Getenv("OC_OUTPUTS"), t.RunId));
+		testcases, err := t.GenerateTestCases();
+		if err != nil {
+			status <-CompileError;
+			return;
+		}
+
+		status <-ExecutionStarted;
+		for _, tc := range testcases{
+			inreader, outwriter, err := tc.GetIOStreams();
+			if err != nil {
+				status <-FileError;
+				continue;
+			}
+
+			exec_command := exec.Command("ruby", t.Codefile);
+			done := make(chan error, 1);
+			exec_command.Stdin = inreader;
+			exec_command.Stdout = outwriter;
+
+			exec_command.Start();
+			go func(){
+				done <- exec_command.Wait();
+			}();
+
+			select {
+			case err := <-done:
+				if err != nil {
+					status <-TestRunError
+					continue;
+				}
+				res, err := CompareFiles(tc.Outputfile, tc.Testfile);
+					if err != nil {
+						status <- TestRunError;
+						continue;
+					}
+					if res {
+						status <- TestSuccess;
+					}else {
+						status <- TestFail;
+					}
+
+			case <- time.After(time.Duration(tc.Maxtime) * time.Millisecond):
+					status <- TestTLE;
+
+			}
+		}
+	}();
+	return status;
+}

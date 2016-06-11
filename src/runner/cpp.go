@@ -15,7 +15,7 @@ func (c CPP) Start (t *task.TestGroup) chan StatusCode {
 
 	//Make directory to store outputs
 	os.Mkdir(path.Join(os.Getenv("OC_OUTPUTS"),t.RunId),0777);
-		
+	// Run compilation and execution in a separate thread		
 	go func () {
 		// Compile
 		compile_input := t.Codefile;
@@ -56,7 +56,7 @@ func (c CPP) Start (t *task.TestGroup) chan StatusCode {
 			}();
 
 			select {
-			case err:= <- done :
+			case err:= <-done :
 				if err != nil {
 					status <- TestRunError;
 				}
@@ -72,12 +72,11 @@ func (c CPP) Start (t *task.TestGroup) chan StatusCode {
 				}else {
 					status <- TestFail;
 				}
-				
-				
+
 			case <- timeout:
 				status <- TestTLE;
 			}
-			
+
 			//Close streams
 			inreader.Close();
 			outwriter.Close();
